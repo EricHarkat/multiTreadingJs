@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Threaded Web Workers Example</title>
+</head>
+<body>
+    <h1>Multi-Threaded Web Workers Example</h1>
+    <input type="number" id="numberInput" placeholder="Enter a number">
+    <button id="calculateButton">Calculate</button>
+    
+    <h2>Results:</h2>
+    <p id="sumResult">Sum: </p>
+    <p id="evenCountResult">Even Count: </p>
+
+    <script>
+        // Création des deux workers
+        const sumWorker = new Worker('sumWorker.js');
+        const evenCountWorker = new Worker('evenCountWorker.js');
+
+        document.getElementById('calculateButton').addEventListener('click', () => {
+            const number = parseInt(document.getElementById('numberInput').value);
+            document.getElementById('sumResult').textContent = 'Calculating sum...';
+            document.getElementById('evenCountResult').textContent = 'Calculating even count...';
+
+            // Envoyer le nombre aux deux workers
+            sumWorker.postMessage(number);
+            evenCountWorker.postMessage(number);
+
+            // Gérer le message de retour du sumWorker
+            sumWorker.onmessage = (e) => {
+                document.getElementById('sumResult').textContent = 'Sum: ' + e.data;
+            };
+
+            // Gérer le message de retour du evenCountWorker
+            evenCountWorker.onmessage = (e) => {
+                document.getElementById('evenCountResult').textContent = 'Even Count: ' + e.data;
+            };
+        });
+    </script>
+</body>
+</html>
